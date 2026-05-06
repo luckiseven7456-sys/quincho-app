@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Quincho — Comprobantes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand: #f97316; --brand-dark: #ea580c; --brand-glow: rgba(249,115,22,0.25);
+      --bg: #0c0a09; --surface: #1c1917; --surface2: #292524; --border: #3d3836;
+      --text: #fafaf9; --text2: #a8a29e; --text3: #57534e;
+      --pending: #f59e0b; --confirmed: #10b981; --rejected: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overscroll-behavior: none; }
+    h1,h2,h3 { font-family: 'Syne', sans-serif; }
+    .screen { display: none; min-height: 100vh; flex-direction: column; }
+    .screen.active { display: flex; }
+
+    /* LOGIN */
+    #loginScreen { align-items: center; justify-content: center; padding: 2rem; background: radial-gradient(ellipse at top, rgba(249,115,22,0.15) 0%, transparent 60%); }
+    .login-box { width: 100%; max-width: 360px; text-align: center; }
+    .app-icon { width: 80px; height: 80px; background: var(--brand); border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; box-shadow: 0 0 40px var(--brand-glow); font-size: 2.2rem; }
+    .login-box h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 0.25rem; }
+    .login-box p { color: var(--text2); margin-bottom: 2.5rem; }
+    .btn-google { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 1rem; border-radius: 16px; font-size: 1rem; font-family: 'DM Sans',sans-serif; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.75rem; transition: all 0.15s; }
+    .btn-google:active { transform: scale(0.97); }
+
+    /* HEADER */
+    .header { position: sticky; top: 0; z-index: 20; background: rgba(12,10,9,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; }
+    .header-left { display: flex; align-items: center; gap: 0.625rem; }
+    .header-icon { width: 36px; height: 36px; background: var(--brand); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .header h2 { font-size: 1.1rem; font-weight: 800; }
+    .header-user { font-size: 0.7rem; color: var(--text3); }
+    .btn-icon { background: none; border: none; color: var(--text3); cursor: pointer; padding: 0.5rem; border-radius: 8px; font-size: 1.2rem; transition: color 0.15s; }
+    .btn-icon:active { color: var(--text); }
+    .main { flex: 1; padding: 1rem; padding-bottom: 6rem; max-width: 500px; margin: 0 auto; width: 100%; }
+
+    /* CALENDAR */
+    .calendar-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1rem; margin-bottom: 1rem; }
+    .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .cal-title { font-family: 'Syne',sans-serif; font-weight: 700; font-size: 1rem; }
+    .cal-nav { background: none; border: none; color: var(--text2); cursor: pointer; font-size: 1.2rem; padding: 0.25rem 0.5rem; border-radius: 8px; transition: color 0.15s; }
+    .cal-nav:active { color: var(--text); }
+    .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+    .cal-day-name { text-align: center; font-size: 0.65rem; color: var(--text3); padding: 0.25rem 0; font-weight: 600; }
+    .cal-day { text-align: center; padding: 0.4rem 0.2rem; border-radius: 8px; font-size: 0.8rem; cursor: pointer; position: relative; transition: all 0.15s; }
+    .cal-day:active { transform: scale(0.9); }
+    .cal-day.empty { cursor: default; }
+    .cal-day.today { color: var(--brand); font-weight: 700; }
+    .cal-day.selected { background: var(--brand); color: white; font-weight: 700; }
+    .cal-day.has-data::after { content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: var(--brand); }
+    .cal-day.selected::after { background: white; }
+
+    /* STATS */
+    .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; margin-bottom: 1rem; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 0.75rem; text-align: center; }
+    .stat-num { font-family: 'Syne',sans-serif; font-size: 1.75rem; font-weight: 800; }
+    .stat-num.pending { color: var(--pending); }
+    .stat-num.confirmed { color: var(--confirmed); }
+    .stat-num.rejected { color: var(--rejected); }
+    .stat-label { font-size: 0.7rem; color: var(--text3); margin-top: 2px; }
+
+    /* DATE FILTER LABEL */
+    .date-label { font-size: 0.8rem; color: var(--text2); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+    .date-label button { background: none; border: none; color: var(--brand); font-size: 0.75rem; cursor: pointer; font-family: 'DM Sans',sans-serif; }
+
+    /* FILTERS */
+    .filters { display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.25rem; margin-bottom: 1rem; }
+    .filters::-webkit-scrollbar { display: none; }
+    .filter-btn { flex-shrink: 0; background: var(--surface); border: 1px solid var(--border); color: var(--text2); padding: 0.4rem 0.85rem; border-radius: 100px; font-size: 0.8rem; font-family: 'DM Sans',sans-serif; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .filter-btn.active { background: var(--brand); border-color: var(--brand); color: white; }
+
+    /* LIST */
+    .list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 1rem; gap: 0.75rem; color: var(--text3); }
+    .empty-icon { font-size: 3rem; opacity: 0.4; }
+
+    /* CARD */
+    .comp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; cursor: pointer; transition: all 0.15s; }
+    .comp-card:active { transform: scale(0.98); border-color: var(--brand); }
+    .comp-thumb { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: var(--surface2); }
+    .comp-thumb-text { width: 52px; height: 52px; border-radius: 10px; flex-shrink: 0; background: var(--surface2); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 1.4rem; }
+    .comp-info { flex: 1; min-width: 0; }
+    .comp-name { font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .comp-monto { font-size: 0.8rem; color: var(--confirmed); font-weight: 600; }
+    .comp-meta { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.25rem; flex-wrap: wrap; }
+    .badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.2rem 0.5rem; border-radius: 100px; font-size: 0.7rem; font-weight: 600; border: 1px solid; }
+    .badge.pendiente { color: var(--pending); background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); }
+    .badge.confirmado { color: var(--confirmed); background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); }
+    .badge.rechazado { color: var(--rejected); background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); }
+    .badge.texto { color: #a78bfa; background: rgba(167,139,250,0.1); border-color: rgba(167,139,250,0.3); }
+    .comp-time { font-size: 0.7rem; color: var(--text3); }
+    .comp-arrow { color: var(--text3); font-size: 1.1rem; }
+    .btn-delete { background: none; border: none; color: var(--text3); cursor: pointer; padding: 0.4rem; border-radius: 8px; font-size: 1rem; transition: color 0.15s; }
+    .btn-delete:active { color: var(--rejected); }
+
+    /* FAB */
+    .fab { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); width: calc(100% - 2rem); max-width: 460px; background: var(--brand); color: white; border: none; padding: 1rem; border-radius: 18px; font-size: 1.05rem; font-family: 'DM Sans',sans-serif; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 8px 30px var(--brand-glow); transition: all 0.15s; }
+    .fab:active { transform: translateX(-50%) scale(0.97); background: var(--brand-dark); }
+
+    /* FORM */
+    .form-body { flex: 1; padding: 1.5rem 1rem; padding-bottom: 6rem; max-width: 500px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 1.25rem; }
+    label { display: block; font-weight: 600; font-size: 0.9rem; color: var(--text2); margin-bottom: 0.5rem; }
+    .input-field { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1rem; color: var(--text); font-size: 1rem; font-family: 'DM Sans',sans-serif; outline: none; transition: border-color 0.15s; }
+    .input-field:focus { border-color: var(--brand); }
+
+    /* TIPO SELECTOR */
+    .tipo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .tipo-btn { background: var(--surface); border: 2px solid var(--border); border-radius: 14px; padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; cursor: pointer; transition: all 0.15s; font-family: 'DM Sans',sans-serif; font-weight: 600; font-size: 0.875rem; color: var(--text2); }
+    .tipo-btn:active { transform: scale(0.97); }
+    .tipo-btn.active { border-color: var(--brand); color: var(--brand); background: rgba(249,115,22,0.08); }
+    .tipo-btn-icon { font-size: 1.75rem; }
+
+    /* IMG BUTTONS */
+    .img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .img-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; cursor: pointer; transition: all 0.15s; color: var(--text2); font-family: 'DM Sans',sans-serif; font-weight: 500; font-size: 0.875rem; }
+    .img-btn:active { border-color: var(--brand); transform: scale(0.97); }
+    .img-btn-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+    .img-btn-icon.orange { background: rgba(249,115,22,0.15); }
+    .img-btn-icon.gray { background: var(--surface2); }
+    .preview-wrap { position: relative; }
+    .preview-img { width: 100%; border-radius: 16px; object-fit: contain; max-height: 260px; background: var(--surface); border: 1px solid var(--border); }
+    .preview-remove { position: absolute; top: 0.75rem; right: 0.75rem; background: rgba(12,10,9,0.8); border: none; color: white; font-size: 1rem; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+    /* AUTO TIME BADGE */
+    .auto-time { display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: var(--confirmed); border-radius: 100px; padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 600; }
+
+    .error-msg { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; border-radius: 12px; padding: 0.75rem 1rem; font-size: 0.875rem; text-align: center; }
+    .btn-save { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); width: calc(100% - 2rem); max-width: 460px; background: var(--brand); color: white; border: none; padding: 1rem; border-radius: 18px; font-size: 1.05rem; font-family: 'DM Sans',sans-serif; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 8px 30px var(--brand-glow); transition: all 0.15s; }
+    .btn-save:active { transform: translateX(-50%) scale(0.97); }
+    .btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* DETALLE */
+    .detail-img { width: 100%; border-radius: 16px; object-fit: contain; max-height: 280px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; margin-bottom: 1rem; }
+    .detail-text-preview { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem; text-align: center; }
+    .detail-monto { font-family: 'Syne',sans-serif; font-size: 2rem; font-weight: 800; color: var(--confirmed); }
+    .detail-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1rem; margin-bottom: 1rem; }
+    .detail-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; }
+    .detail-row + .detail-row { border-top: 1px solid var(--border); }
+    .detail-label { color: var(--text2); font-size: 0.875rem; }
+    .detail-val { font-weight: 600; font-size: 0.875rem; }
+    .estado-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; }
+    .estado-btn { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; padding: 1rem 0.5rem; border-radius: 14px; border: 1px solid var(--border); background: var(--surface); color: var(--text2); font-family: 'DM Sans',sans-serif; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .estado-btn .e-icon { font-size: 1.4rem; }
+    .estado-btn:active { transform: scale(0.95); }
+    .estado-btn.pendiente.active { background: rgba(245,158,11,0.15); border-color: var(--pending); color: var(--pending); }
+    .estado-btn.confirmado.active { background: rgba(16,185,129,0.15); border-color: var(--confirmed); color: var(--confirmed); }
+    .estado-btn.rechazado.active { background: rgba(239,68,68,0.15); border-color: var(--rejected); color: var(--rejected); }
+
+    /* LIGHTBOX */
+    .lightbox { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; padding: 1rem; }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 100%; max-height: 100%; border-radius: 12px; object-fit: contain; }
+    .lightbox-close { position: absolute; top: 1rem; right: 1rem; background: var(--surface2); border: none; color: white; font-size: 1.4rem; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+    /* SUCCESS */
+    .success-overlay { display: none; position: fixed; inset: 0; z-index: 50; background: var(--bg); flex-direction: column; align-items: center; justify-content: center; gap: 1rem; }
+    .success-overlay.show { display: flex; }
+    .success-icon { font-size: 4rem; animation: bounce 0.6s ease; }
+    @keyframes bounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
+    .spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading { display: flex; align-items: center; justify-content: center; padding: 3rem; }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="screen active">
+  <div class="login-box">
+    <div class="app-icon">🔥</div>
+    <h1>Quincho</h1>
+    <p>Control de comprobantes</p>
+    <button class="btn-google" onclick="loginGoogle()">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.29-8.16 2.29-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Entrar con Google
+    </button>
+  </div>
+</div>
+
+<!-- LISTA -->
+<div id="listaScreen" class="screen">
+  <div class="header">
+    <div class="header-left">
+      <div class="header-icon">🔥</div>
+      <div><h2>Quincho</h2><div class="header-user" id="headerUser"></div></div>
+    </div>
+    <div style="display:flex;gap:0.25rem">
+      <button class="btn-icon" onclick="loadComprobantes()" title="Actualizar">↻</button>
+      <button class="btn-icon" onclick="logout()" title="Salir">⏏</button>
+    </div>
+  </div>
+  <div class="main">
+    <!-- CALENDAR -->
+    <div class="calendar-wrap">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
+        <span class="cal-title" id="calTitle"></span>
+        <button class="cal-nav" onclick="changeMonth(1)">›</button>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-day-name">Do</div><div class="cal-day-name">Lu</div>
+        <div class="cal-day-name">Ma</div><div class="cal-day-name">Mi</div>
+        <div class="cal-day-name">Ju</div><div class="cal-day-name">Vi</div>
+        <div class="cal-day-name">Sa</div>
+        <div id="calDays"></div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card"><div class="stat-num pending" id="statPending">0</div><div class="stat-label">Pendientes</div></div>
+      <div class="stat-card"><div class="stat-num confirmed" id="statConfirmed">0</div><div class="stat-label">Confirmados</div></div>
+      <div class="stat-card"><div class="stat-num rejected" id="statRejected">0</div><div class="stat-label">Rechazados</div></div>
+    </div>
+
+    <div class="date-label" id="dateLabelWrap" style="display:none">
+      📅 <span id="dateLabel"></span>
+      <button onclick="clearDateFilter()">Ver todos</button>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" onclick="setFiltro('todos',this)">Todos</button>
+      <button class="filter-btn" onclick="setFiltro('pendiente',this)">Pendientes</button>
+      <button class="filter-btn" onclick="setFiltro('confirmado',this)">Confirmados</button>
+      <button class="filter-btn" onclick="setFiltro('rechazado',this)">Rechazados</button>
+    </div>
+    <div id="listaContainer" class="list">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+  </div>
+  <button class="fab" onclick="showScreen('nuevoScreen');resetNuevoForm()">
+    <span style="font-size:1.3rem">＋</span> Nuevo comprobante
+  </button>
+</div>
+
+<!-- NUEVO -->
+<div id="nuevoScreen" class="screen">
+  <div class="header">
+    <div class="header-left">
+      <button class="btn-icon" onclick="showScreen('listaScreen')" style="font-size:1.4rem">←</button>
+      <h2>Nuevo comprobante</h2>
+    </div>
+  </div>
+  <div class="form-body">
+    <!-- TIPO -->
+    <div>
+      <label>Tipo de registro</label>
+      <div class="tipo-grid">
+        <button class="tipo-btn active" id="tipoFotoBtn" onclick="setTipo('foto')">
+          <span class="tipo-btn-icon">📷</span>
+          Con foto
+        </button>
+        <button class="tipo-btn" id="tipoTextoBtn" onclick="setTipo('texto')">
+          <span class="tipo-btn-icon">✍️</span>
+          Solo texto
+        </button>
+      </div>
+    </div>
+
+    <!-- NOMBRE -->
+    <div>
+      <label>Nombre y apellido</label>
+      <input type="text" class="input-field" id="nombreInput" placeholder="Ej: Juan García" autocomplete="off" />
+    </div>
+
+    <!-- MONTO (siempre visible) -->
+    <div>
+      <label>Monto transferido</label>
+      <input type="number" class="input-field" id="montoInput" placeholder="Ej: 5000" inputmode="numeric" />
+    </div>
+
+    <!-- FOTO SECTION -->
+    <div id="fotoSection">
+      <label>Foto del comprobante</label>
+      <div id="imgGridWrap">
+        <div class="img-grid">
+          <button class="img-btn" onclick="document.getElementById('cameraInput').click()">
+            <div class="img-btn-icon orange">📷</div>
+            Sacar foto
+          </button>
+          <button class="img-btn" onclick="document.getElementById('galleryInput').click()">
+            <div class="img-btn-icon gray">🖼️</div>
+            Galería
+          </button>
+        </div>
+      </div>
+      <div id="previewWrap" class="preview-wrap" style="display:none">
+        <img id="previewImg" class="preview-img" />
+        <button class="preview-remove" onclick="removePreview()">✕</button>
+      </div>
+    </div>
+
+    <!-- HORA AUTOMATICA -->
+    <div>
+      <label>Hora de registro</label>
+      <div class="auto-time" id="autoTimeBadge">⏰ Cargando...</div>
+    </div>
+
+    <div id="formError" class="error-msg" style="display:none"></div>
+    <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" onchange="handleFile(this)" />
+    <input type="file" id="galleryInput" accept="image/*" style="display:none" onchange="handleFile(this)" />
+  </div>
+  <button class="btn-save" id="btnSave" onclick="guardarComprobante()">
+    <span>⬆</span> Guardar comprobante
+  </button>
+</div>
+
+<!-- DETALLE -->
+<div id="detalleScreen" class="screen">
+  <div class="header">
+    <div class="header-left">
+      <button class="btn-icon" onclick="showScreen('listaScreen')" style="font-size:1.4rem">←</button>
+      <h2 id="detalleNombre">Detalle</h2>
+    </div>
+    <button class="btn-icon" onclick="eliminarComprobante()" style="font-size:1.1rem">🗑</button>
+  </div>
+  <div class="main">
+    <div id="detalleImgWrap">
+      <img id="detalleImg" class="detail-img" onclick="openLightbox(this.src)" />
+    </div>
+    <div id="detalleTextoWrap" class="detail-text-preview" style="display:none">
+      <div style="font-size:2rem;margin-bottom:0.5rem">✍️</div>
+      <div style="color:var(--text2);font-size:0.875rem;margin-bottom:0.5rem">Registro manual</div>
+      <div class="detail-monto" id="detalleMonto"></div>
+    </div>
+    <div class="detail-card">
+      <div class="detail-row"><span class="detail-label">Persona</span><span class="detail-val" id="detalleNombreVal"></span></div>
+      <div class="detail-row"><span class="detail-label">Monto</span><span class="detail-val" id="detalleMonto2" style="color:var(--confirmed)"></span></div>
+      <div class="detail-row"><span class="detail-label">Fecha</span><span class="detail-val" id="detalleFecha"></span></div>
+      <div class="detail-row"><span class="detail-label">Hora</span><span class="detail-val" id="detalleHora"></span></div>
+      <div class="detail-row"><span class="detail-label">Tipo</span><span class="detail-val" id="detalleTipo"></span></div>
+    </div>
+    <label style="margin-bottom:0.75rem;display:block">Estado</label>
+    <div class="estado-grid">
+      <button class="estado-btn pendiente" onclick="cambiarEstado('pendiente')"><span class="e-icon">⏳</span>Pendiente</button>
+      <button class="estado-btn confirmado" onclick="cambiarEstado('confirmado')"><span class="e-icon">✅</span>Confirmado</button>
+      <button class="estado-btn rechazado" onclick="cambiarEstado('rechazado')"><span class="e-icon">❌</span>Rechazado</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightboxImg" />
+</div>
+
+<!-- SUCCESS -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-icon">✅</div>
+  <h2 style="font-size:1.75rem">¡Guardado!</h2>
+  <p style="color:var(--text2)">Redirigiendo...</p>
+</div>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC8PtJJEYW_A_wOm7LfbcFEKJJa1fEeq6I",
+    authDomain: "quincho-comprobantes-1309b.firebaseapp.com",
+    projectId: "quincho-comprobantes-1309b",
+    storageBucket: "quincho-comprobantes-1309b.firebasestorage.app",
+    messagingSenderId: "402022210350",
+    appId: "1:402022210350:web:adb206fbdac15a727538bf"
+  };
+
+  const CLOUDINARY_CLOUD = 'dftn4brz1';
+  const CLOUDINARY_PRESET = 'quincho_upload';
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  let currentUser = null;
+  let allComprobantes = [];
+  let currentFiltro = 'todos';
+  let currentDetalleId = null;
+  let selectedDateFilter = null;
+  let currentTipo = 'foto';
+
+  // CALENDAR STATE
+  let calYear = new Date().getFullYear();
+  let calMonth = new Date().getMonth();
+
+  // AUTH
+  window.loginGoogle = async () => {
+    try { await signInWithPopup(auth, provider); }
+    catch(e) { alert('Error al iniciar sesión: ' + e.message); }
+  };
+  window.logout = async () => { await signOut(auth); showScreen('loginScreen'); };
+
+  onAuthStateChanged(auth, user => {
+    currentUser = user;
+    if (user) {
+      document.getElementById('headerUser').textContent = user.displayName || user.email;
+      showScreen('listaScreen');
+      loadComprobantes();
+      renderCalendar();
+    } else { showScreen('loginScreen'); }
+  });
+
+  // LOAD
+  window.loadComprobantes = async () => {
+    document.getElementById('listaContainer').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+    const q = query(collection(db, 'comprobantes'), orderBy('created_at', 'desc'));
+    const snap = await getDocs(q);
+    allComprobantes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderLista();
+    renderCalendar();
+  };
+
+  // CALENDAR
+  window.changeMonth = (dir) => {
+    calMonth += dir;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    if (calMonth < 0) { calMonth = 11; calYear--; }
+    renderCalendar();
+  };
+
+  function renderCalendar() {
+    const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    document.getElementById('calTitle').textContent = `${months[calMonth]} ${calYear}`;
+
+    const firstDay = new Date(calYear, calMonth, 1).getDay();
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const today = new Date();
+
+    // Get days that have data
+    const daysWithData = new Set();
+    allComprobantes.forEach(c => {
+      const d = c.created_at?.toDate ? c.created_at.toDate() : new Date(c.created_at);
+      if (d.getFullYear() === calYear && d.getMonth() === calMonth) {
+        daysWithData.add(d.getDate());
+      }
+    });
+
+    let html = '';
+    for (let i = 0; i < firstDay; i++) html += '<div class="cal-day empty"></div>';
+    for (let d = 1; d <= daysInMonth; d++) {
+      const isToday = today.getDate() === d && today.getMonth() === calMonth && today.getFullYear() === calYear;
+      const selDate = selectedDateFilter;
+      const isSelected = selDate && selDate.getDate() === d && selDate.getMonth() === calMonth && selDate.getFullYear() === calYear;
+      const hasData = daysWithData.has(d);
+      const classes = ['cal-day', isToday?'today':'', isSelected?'selected':'', hasData?'has-data':''].filter(Boolean).join(' ');
+      html += `<div class="${classes}" onclick="selectDay(${d})">${d}</div>`;
+    }
+
+    document.getElementById('calDays').innerHTML = html;
+  }
+
+  window.selectDay = (day) => {
+    selectedDateFilter = new Date(calYear, calMonth, day);
+    const label = selectedDateFilter.toLocaleDateString('es-AR', { weekday:'long', day:'2-digit', month:'long' });
+    document.getElementById('dateLabel').textContent = label;
+    document.getElementById('dateLabelWrap').style.display = 'flex';
+    renderCalendar();
+    renderLista();
+  };
+
+  window.clearDateFilter = () => {
+    selectedDateFilter = null;
+    document.getElementById('dateLabelWrap').style.display = 'none';
+    renderCalendar();
+    renderLista();
+  };
+
+  function renderLista() {
+    let filtered = currentFiltro === 'todos'
+      ? allComprobantes
+      : allComprobantes.filter(c => c.estado === currentFiltro);
+
+    if (selectedDateFilter) {
+      filtered = filtered.filter(c => {
+        const d = c.created_at?.toDate ? c.created_at.toDate() : new Date(c.created_at);
+        return d.getDate() === selectedDateFilter.getDate() &&
+               d.getMonth() === selectedDateFilter.getMonth() &&
+               d.getFullYear() === selectedDateFilter.getFullYear();
+      });
+    }
+
+    // Stats always from all
+    document.getElementById('statPending').textContent = allComprobantes.filter(c => c.estado === 'pendiente').length;
+    document.getElementById('statConfirmed').textContent = allComprobantes.filter(c => c.estado === 'confirmado').length;
+    document.getElementById('statRejected').textContent = allComprobantes.filter(c => c.estado === 'rechazado').length;
+
+    const container = document.getElementById('listaContainer');
+    if (filtered.length === 0) {
+      container.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><span>Sin comprobantes</span></div>';
+      return;
+    }
+
+    container.innerHTML = filtered.map(c => {
+      const d = c.created_at?.toDate ? c.created_at.toDate() : new Date(c.created_at);
+      const hora = d.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' });
+      const fecha = d.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit' });
+      const iconos = { pendiente:'⏳', confirmado:'✅', rechazado:'❌' };
+      const esTexto = c.tipo === 'texto' || !c.imagen_url;
+      const thumb = esTexto
+        ? `<div class="comp-thumb-text">✍️</div>`
+        : `<img class="comp-thumb" src="${c.imagen_url}" alt="${c.nombre}" loading="lazy" />`;
+      const monto = c.monto ? `<div class="comp-monto">$${Number(c.monto).toLocaleString('es-AR')}</div>` : '';
+      return `
+        <div class="comp-card" onclick="abrirDetalle('${c.id}')">
+          ${thumb}
+          <div class="comp-info">
+            <div class="comp-name">${c.nombre}</div>
+            ${monto}
+            <div class="comp-meta">
+              <span class="badge ${c.estado}">${iconos[c.estado]} ${c.estado.charAt(0).toUpperCase()+c.estado.slice(1)}</span>
+              ${esTexto ? '<span class="badge texto">✍️ Texto</span>' : ''}
+              <span class="comp-time">${fecha} · ${hora}</span>
+            </div>
+          </div>
+          <button class="btn-delete" onclick="event.stopPropagation();eliminarDesdeLista('${c.id}')">🗑</button>
+          <span class="comp-arrow">›</span>
+        </div>`;
+    }).join('');
+  }
+
+  window.setFiltro = (filtro, btn) => {
+    currentFiltro = filtro;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderLista();
+  };
+
+  // TIPO SELECTOR
+  window.setTipo = (tipo) => {
+    currentTipo = tipo;
+    document.getElementById('tipoFotoBtn').classList.toggle('active', tipo === 'foto');
+    document.getElementById('tipoTextoBtn').classList.toggle('active', tipo === 'texto');
+    document.getElementById('fotoSection').style.display = tipo === 'foto' ? 'block' : 'none';
+  };
+
+  // AUTO TIME
+  function updateAutoTime() {
+    const now = new Date();
+    const str = now.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit', second:'2-digit' }) +
+                ' — ' + now.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric' });
+    const el = document.getElementById('autoTimeBadge');
+    if (el) el.textContent = '⏰ ' + str;
+  }
+  setInterval(updateAutoTime, 1000);
+  updateAutoTime();
+
+  window.resetNuevoForm = () => {
+    document.getElementById('nombreInput').value = '';
+    document.getElementById('montoInput').value = '';
+    document.getElementById('formError').style.display = 'none';
+    removePreview();
+    setTipo('foto');
+    updateAutoTime();
+  };
+
+  // FILE
+  let selectedFile = null;
+  window.handleFile = (input) => {
+    const f = input.files[0];
+    if (!f) return;
+    selectedFile = f;
+    const url = URL.createObjectURL(f);
+    document.getElementById('previewImg').src = url;
+    document.getElementById('imgGridWrap').style.display = 'none';
+    document.getElementById('previewWrap').style.display = 'block';
+  };
+  window.removePreview = () => {
+    selectedFile = null;
+    document.getElementById('previewImg').src = '';
+    document.getElementById('imgGridWrap').style.display = 'block';
+    document.getElementById('previewWrap').style.display = 'none';
+  };
+
+  // GUARDAR
+  window.guardarComprobante = async () => {
+    const nombre = document.getElementById('nombreInput').value.trim();
+    const monto = document.getElementById('montoInput').value.trim();
+    const errEl = document.getElementById('formError');
+    errEl.style.display = 'none';
+
+    if (!nombre) { errEl.textContent = 'Escribí el nombre de la persona.'; errEl.style.display = 'block'; return; }
+    if (currentTipo === 'foto' && !selectedFile) { errEl.textContent = 'Adjuntá una foto del comprobante.'; errEl.style.display = 'block'; return; }
+
+    const btn = document.getElementById('btnSave');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Guardando...';
+
+    try {
+      let imagen_url = null;
+
+      if (currentTipo === 'foto' && selectedFile) {
+        const fd = new FormData();
+        fd.append('file', selectedFile);
+        fd.append('upload_preset', CLOUDINARY_PRESET);
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method:'POST', body:fd });
+        const data = await res.json();
+        if (!data.secure_url) throw new Error('Error subiendo imagen');
+        imagen_url = data.secure_url;
+      }
+
+      await addDoc(collection(db, 'comprobantes'), {
+        nombre,
+        monto: monto || null,
+        imagen_url,
+        tipo: currentTipo,
+        estado: 'pendiente',
+        user_id: currentUser.uid,
+        user_email: currentUser.email,
+        user_name: currentUser.displayName,
+        created_at: serverTimestamp()
+      });
+
+      document.getElementById('successOverlay').classList.add('show');
+      setTimeout(() => {
+        document.getElementById('successOverlay').classList.remove('show');
+        btn.disabled = false;
+        btn.innerHTML = '<span>⬆</span> Guardar comprobante';
+        showScreen('listaScreen');
+        loadComprobantes();
+      }, 1500);
+    } catch(e) {
+      errEl.textContent = 'Error: ' + e.message;
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = '<span>⬆</span> Guardar comprobante';
+    }
+  };
+
+  // DETALLE
+  window.abrirDetalle = (id) => {
+    const c = allComprobantes.find(x => x.id === id);
+    if (!c) return;
+    currentDetalleId = id;
+    const esTexto = c.tipo === 'texto' || !c.imagen_url;
+
+    document.getElementById('detalleNombre').textContent = c.nombre;
+    document.getElementById('detalleNombreVal').textContent = c.nombre;
+    document.getElementById('detalleMonto').textContent = c.monto ? `$${Number(c.monto).toLocaleString('es-AR')}` : 'No especificado';
+    document.getElementById('detalleMonto2').textContent = c.monto ? `$${Number(c.monto).toLocaleString('es-AR')}` : '—';
+    document.getElementById('detalleTipo').textContent = esTexto ? '✍️ Registro manual' : '📷 Con foto';
+
+    document.getElementById('detalleImgWrap').style.display = esTexto ? 'none' : 'block';
+    document.getElementById('detalleTextoWrap').style.display = esTexto ? 'block' : 'none';
+
+    if (!esTexto) document.getElementById('detalleImg').src = c.imagen_url;
+
+    const d = c.created_at?.toDate ? c.created_at.toDate() : new Date(c.created_at);
+    document.getElementById('detalleFecha').textContent = d.toLocaleDateString('es-AR', { day:'2-digit', month:'long', year:'numeric' });
+    document.getElementById('detalleHora').textContent = d.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' });
+
+    document.querySelectorAll('.estado-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.estado-btn.${c.estado}`)?.classList.add('active');
+    showScreen('detalleScreen');
+  };
+
+  window.cambiarEstado = async (estado) => {
+    if (!currentDetalleId) return;
+    await updateDoc(doc(db, 'comprobantes', currentDetalleId), { estado });
+    const c = allComprobantes.find(x => x.id === currentDetalleId);
+    if (c) c.estado = estado;
+    document.querySelectorAll('.estado-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.estado-btn.${estado}`)?.classList.add('active');
+    renderLista();
+  };
+
+  window.eliminarComprobante = async () => {
+    if (!currentDetalleId) return;
+    if (!confirm('¿Eliminar este comprobante?')) return;
+    await deleteDoc(doc(db, 'comprobantes', currentDetalleId));
+    allComprobantes = allComprobantes.filter(c => c.id !== currentDetalleId);
+    renderLista();
+    showScreen('listaScreen');
+  };
+
+  window.eliminarDesdeLista = async (id) => {
+    if (!confirm('¿Eliminar?')) return;
+    await deleteDoc(doc(db, 'comprobantes', id));
+    allComprobantes = allComprobantes.filter(c => c.id !== id);
+    renderLista();
+    renderCalendar();
+  };
+
+  window.openLightbox = (src) => { document.getElementById('lightboxImg').src = src; document.getElementById('lightbox').classList.add('open'); };
+  window.closeLightbox = () => document.getElementById('lightbox').classList.remove('open');
+</script>
+
+<script>
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>
