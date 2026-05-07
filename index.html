@@ -177,6 +177,18 @@
     .informe-row-name { font-weight: 600; font-size: 0.875rem; }
     .informe-row-monto { font-weight: 700; color: var(--confirmed); font-size: 0.875rem; }
 
+    /* PAGINATION */
+    .pagination { display: flex; align-items: center; justify-content: space-between; margin-top: 1rem; gap: 0.5rem; }
+    .pag-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text2); padding: 0.6rem 1rem; border-radius: 12px; font-size: 0.875rem; font-family: 'DM Sans',sans-serif; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .pag-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .pag-btn:not(:disabled):active { background: var(--surface2); color: var(--text); }
+    .pag-info { font-size: 0.8rem; color: var(--text3); }
+
+    /* DAY TOTAL */
+    .day-total-card { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.04)); border: 1px solid rgba(16,185,129,0.3); border-radius: 16px; padding: 1rem 1.25rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+    .day-total-label { font-size: 0.8rem; color: var(--text2); margin-bottom: 0.2rem; }
+    .day-total-num { font-family: 'Syne',sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--confirmed); }
+
     /* LIGHTBOX */
     .lightbox { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; padding: 1rem; }
     .lightbox.open { display: flex; }
@@ -242,6 +254,16 @@
     <div class="date-label" id="dateLabelWrap" style="display:none">
       📅 <span id="dateLabel"></span>
       <button onclick="clearDateFilter()">Ver todos</button>
+    </div>
+    <div id="dayTotalCard" style="display:none" class="day-total-card">
+      <div>
+        <div class="day-total-label" id="dayTotalLabel">Total del día</div>
+        <div class="day-total-num" id="dayTotalNum">$0</div>
+      </div>
+      <div style="font-size:0.7rem;color:var(--text3);text-align:right">
+        <div id="dayTotalConf" style="color:var(--confirmed)"></div>
+        <div id="dayTotalPend" style="color:var(--pending)"></div>
+      </div>
     </div>
     <div class="filters">
       <button class="filter-btn active" onclick="setFiltro('todos',this)">Todos</button>
@@ -495,14 +517,34 @@
     const label = selectedDateFilter.toLocaleDateString('es-AR', { weekday:'long', day:'2-digit', month:'long' });
     document.getElementById('dateLabel').textContent = label;
     document.getElementById('dateLabelWrap').style.display = 'flex';
-    renderCalendar(); renderLista();
+    renderCalendar();
+    renderLista();
+    renderDayTotal();
   };
 
   window.clearDateFilter = () => {
     selectedDateFilter = null;
     document.getElementById('dateLabelWrap').style.display = 'none';
+    document.getElementById('dayTotalCard').style.display = 'none';
     renderCalendar(); renderLista();
   };
+
+  function renderDayTotal() {
+    if (!selectedDateFilter) return;
+    const dayComps = allComprobantes.filter(c => {
+      const d = c.created_at?.toDate ? c.created_at.toDate() : new Date(c.created_at);
+      return d.getDate() === selectedDateFilter.getDate() && d.getMonth() === selectedDateFilter.getMonth() && d.getFullYear() === selectedDateFilter.getFullYear();
+    });
+    const total = dayComps.reduce((s, c) => s + (Number(c.monto) || 0), 0);
+    const totalConf = dayComps.filter(c => c.estado === 'confirmado').reduce((s, c) => s + (Number(c.monto) || 0), 0);
+    const totalPend = dayComps.filter(c => c.estado === 'pendiente').reduce((s, c) => s + (Number(c.monto) || 0), 0);
+    const label = selectedDateFilter.toLocaleDateString('es-AR', { weekday:'long', day:'2-digit', month:'long' });
+    document.getElementById('dayTotalLabel').textContent = `💰 Total — ${label}`;
+    document.getElementById('dayTotalNum').textContent = `$${total.toLocaleString('es-AR')}`;
+    document.getElementById('dayTotalConf').textContent = totalConf > 0 ? `✅ $${totalConf.toLocaleString('es-AR')} confirmado` : '';
+    document.getElementById('dayTotalPend').textContent = totalPend > 0 ? `⏳ $${totalPend.toLocaleString('es-AR')} pendiente` : '';
+    document.getElementById('dayTotalCard').style.display = 'flex';
+  }
 
   function renderLista() {
     let filtered = currentFiltro === 'todos' ? allComprobantes : allComprobantes.filter(c => c.estado === currentFiltro);
@@ -689,10 +731,19 @@
   };
 
   // INFORME
+  let informePagina = 0;
+  const INFORME_POR_PAG = 10;
+
   window.setInformeTab = (tab, btn) => {
     currentInformeTab = tab;
+    informePagina = 0;
     document.querySelectorAll('.informe-tab').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    renderInforme();
+  };
+
+  window.cambiarPagina = (dir) => {
+    informePagina += dir;
     renderInforme();
   };
 
@@ -729,8 +780,14 @@
     const totalPendiente = pendientes.reduce((s, c) => s + (Number(c.monto) || 0), 0);
     const totalGeneral = filtrados.reduce((s, c) => s + (Number(c.monto) || 0), 0);
 
-    // Top transferencias
-    const conMonto = filtrados.filter(c => c.monto && Number(c.monto) > 0).sort((a,b) => Number(b.monto) - Number(a.monto)).slice(0, 999);
+    // Paginacion
+    const conMonto = filtrados.filter(c => c.monto && Number(c.monto) > 0).sort((a,b) => Number(b.monto) - Number(a.monto));
+    const totalPags = Math.ceil(conMonto.length / INFORME_POR_PAG);
+    if (informePagina >= totalPags && totalPags > 0) informePagina = totalPags - 1;
+    if (informePagina < 0) informePagina = 0;
+    const pagActual = conMonto.slice(informePagina * INFORME_POR_PAG, (informePagina + 1) * INFORME_POR_PAG);
+    const desde_num = informePagina * INFORME_POR_PAG + 1;
+    const hasta_num = Math.min((informePagina + 1) * INFORME_POR_PAG, conMonto.length);
 
     document.getElementById('informeContenido').innerHTML = `
       <div class="informe-total">
@@ -757,15 +814,25 @@
         </div>
       </div>
       ${conMonto.length > 0 ? `
-        <div class="informe-section-title">💰 Mayores transferencias</div>
-        ${conMonto.map(c => `
+        <div class="informe-section-title">💰 Transferencias (${conMonto.length} total)</div>
+        ${pagActual.map(c => `
           <div class="informe-row">
             <div>
               <div class="informe-row-name">${c.nombre}</div>
-              <div style="font-size:0.7rem;color:var(--text3)">${(c.created_at?.toDate ? c.created_at.toDate() : new Date(c.created_at)).toLocaleDateString('es-AR', {day:'2-digit',month:'2-digit'})}</div>
+              <div style="font-size:0.7rem;color:var(--text3)">${(c.created_at?.toDate ? c.created_at.toDate() : new Date(c.created_at)).toLocaleDateString('es-AR', {day:'2-digit',month:'2-digit'})} · ${(c.created_at?.toDate ? c.created_at.toDate() : new Date(c.created_at)).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}</div>
             </div>
-            <div class="informe-row-monto">$${Number(c.monto).toLocaleString('es-AR')}</div>
+            <div style="text-align:right">
+              <div class="informe-row-monto">$${Number(c.monto).toLocaleString('es-AR')}</div>
+              <div style="font-size:0.65rem;color:var(--text3)">${c.estado}</div>
+            </div>
           </div>`).join('')}
+        ${totalPags > 1 ? `
+          <div class="pagination">
+            <button class="pag-btn" onclick="cambiarPagina(-1)" ${informePagina === 0 ? 'disabled' : ''}>← Anterior</button>
+            <span class="pag-info">${desde_num}-${hasta_num} de ${conMonto.length}</span>
+            <button class="pag-btn" onclick="cambiarPagina(1)" ${informePagina >= totalPags - 1 ? 'disabled' : ''}>Siguiente →</button>
+          </div>
+        ` : ''}
       ` : '<div class="empty"><div class="empty-icon">📊</div><span>Sin datos con monto en este período</span></div>'}
     `;
   };
@@ -783,3 +850,9 @@
 </script>
 </body>
 </html>
+
+
+
+
+
+
