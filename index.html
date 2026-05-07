@@ -63,7 +63,6 @@
     .stat-num.rejected { color: var(--rejected); }
     .stat-label { font-size: 0.7rem; color: var(--text3); margin-top: 2px; }
 
-    /* DATE FILTER LABEL */
     .date-label { font-size: 0.8rem; color: var(--text2); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
     .date-label button { background: none; border: none; color: var(--brand); font-size: 0.75rem; cursor: pointer; font-family: 'DM Sans',sans-serif; }
 
@@ -97,24 +96,23 @@
     .btn-delete { background: none; border: none; color: var(--text3); cursor: pointer; padding: 0.4rem; border-radius: 8px; font-size: 1rem; transition: color 0.15s; }
     .btn-delete:active { color: var(--rejected); }
 
-    /* FAB */
-    .fab { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); width: calc(100% - 2rem); max-width: 460px; background: var(--brand); color: white; border: none; padding: 1rem; border-radius: 18px; font-size: 1.05rem; font-family: 'DM Sans',sans-serif; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 8px 30px var(--brand-glow); transition: all 0.15s; }
-    .fab:active { transform: translateX(-50%) scale(0.97); background: var(--brand-dark); }
+    /* FAB AREA */
+    .fab-area { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); width: calc(100% - 2rem); max-width: 460px; display: flex; gap: 0.5rem; }
+    .fab { flex: 1; background: var(--brand); color: white; border: none; padding: 1rem; border-radius: 18px; font-size: 1.05rem; font-family: 'DM Sans',sans-serif; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 8px 30px var(--brand-glow); transition: all 0.15s; }
+    .fab:active { transform: scale(0.97); background: var(--brand-dark); }
+    .fab-report { background: var(--surface); border: 1px solid var(--border); color: var(--text2); padding: 1rem 1.1rem; border-radius: 18px; font-size: 1.3rem; cursor: pointer; box-shadow: 0 8px 30px rgba(0,0,0,0.3); transition: all 0.15s; }
+    .fab-report:active { transform: scale(0.97); color: var(--text); }
 
     /* FORM */
     .form-body { flex: 1; padding: 1.5rem 1rem; padding-bottom: 6rem; max-width: 500px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 1.25rem; }
     label { display: block; font-weight: 600; font-size: 0.9rem; color: var(--text2); margin-bottom: 0.5rem; }
     .input-field { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1rem; color: var(--text); font-size: 1rem; font-family: 'DM Sans',sans-serif; outline: none; transition: border-color 0.15s; }
     .input-field:focus { border-color: var(--brand); }
-
-    /* TIPO SELECTOR */
     .tipo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
     .tipo-btn { background: var(--surface); border: 2px solid var(--border); border-radius: 14px; padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; cursor: pointer; transition: all 0.15s; font-family: 'DM Sans',sans-serif; font-weight: 600; font-size: 0.875rem; color: var(--text2); }
     .tipo-btn:active { transform: scale(0.97); }
     .tipo-btn.active { border-color: var(--brand); color: var(--brand); background: rgba(249,115,22,0.08); }
     .tipo-btn-icon { font-size: 1.75rem; }
-
-    /* IMG BUTTONS */
     .img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
     .img-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; cursor: pointer; transition: all 0.15s; color: var(--text2); font-family: 'DM Sans',sans-serif; font-weight: 500; font-size: 0.875rem; }
     .img-btn:active { border-color: var(--brand); transform: scale(0.97); }
@@ -124,10 +122,7 @@
     .preview-wrap { position: relative; }
     .preview-img { width: 100%; border-radius: 16px; object-fit: contain; max-height: 260px; background: var(--surface); border: 1px solid var(--border); }
     .preview-remove { position: absolute; top: 0.75rem; right: 0.75rem; background: rgba(12,10,9,0.8); border: none; color: white; font-size: 1rem; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-
-    /* AUTO TIME BADGE */
     .auto-time { display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: var(--confirmed); border-radius: 100px; padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 600; }
-
     .error-msg { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; border-radius: 12px; padding: 0.75rem 1rem; font-size: 0.875rem; text-align: center; }
     .btn-save { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); width: calc(100% - 2rem); max-width: 460px; background: var(--brand); color: white; border: none; padding: 1rem; border-radius: 18px; font-size: 1.05rem; font-family: 'DM Sans',sans-serif; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 8px 30px var(--brand-glow); transition: all 0.15s; }
     .btn-save:active { transform: translateX(-50%) scale(0.97); }
@@ -142,13 +137,45 @@
     .detail-row + .detail-row { border-top: 1px solid var(--border); }
     .detail-label { color: var(--text2); font-size: 0.875rem; }
     .detail-val { font-weight: 600; font-size: 0.875rem; }
-    .estado-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; }
+    .estado-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; margin-bottom: 1rem; }
     .estado-btn { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; padding: 1rem 0.5rem; border-radius: 14px; border: 1px solid var(--border); background: var(--surface); color: var(--text2); font-family: 'DM Sans',sans-serif; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
     .estado-btn .e-icon { font-size: 1.4rem; }
     .estado-btn:active { transform: scale(0.95); }
     .estado-btn.pendiente.active { background: rgba(245,158,11,0.15); border-color: var(--pending); color: var(--pending); }
     .estado-btn.confirmado.active { background: rgba(16,185,129,0.15); border-color: var(--confirmed); color: var(--confirmed); }
     .estado-btn.rechazado.active { background: rgba(239,68,68,0.15); border-color: var(--rejected); color: var(--rejected); }
+    .btn-edit { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.875rem; border-radius: 14px; font-size: 0.95rem; font-family: 'DM Sans',sans-serif; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.15s; margin-bottom: 1rem; }
+    .btn-edit:active { transform: scale(0.97); background: var(--border); }
+
+    /* EDIT MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; z-index: 80; background: rgba(0,0,0,0.7); align-items: flex-end; justify-content: center; padding: 1rem; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 1.5rem; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 1rem; }
+    .modal h3 { font-size: 1.1rem; font-weight: 800; }
+    .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .btn-cancel { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); padding: 0.875rem; border-radius: 14px; font-size: 0.95rem; font-family: 'DM Sans',sans-serif; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .btn-confirm { background: var(--brand); border: none; color: white; padding: 0.875rem; border-radius: 14px; font-size: 0.95rem; font-family: 'DM Sans',sans-serif; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .btn-confirm:active { transform: scale(0.97); }
+
+    /* INFORME */
+    .informe-tabs { display: flex; gap: 0.4rem; margin-bottom: 1.25rem; }
+    .informe-tab { flex: 1; background: var(--surface); border: 1px solid var(--border); color: var(--text2); padding: 0.6rem; border-radius: 12px; font-size: 0.85rem; font-family: 'DM Sans',sans-serif; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.15s; }
+    .informe-tab.active { background: var(--brand); border-color: var(--brand); color: white; }
+    .informe-total { background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(249,115,22,0.05)); border: 1px solid rgba(249,115,22,0.3); border-radius: 20px; padding: 1.5rem; text-align: center; margin-bottom: 1rem; }
+    .informe-total-label { font-size: 0.8rem; color: var(--text2); margin-bottom: 0.25rem; }
+    .informe-total-num { font-family: 'Syne',sans-serif; font-size: 2.5rem; font-weight: 800; color: var(--brand); }
+    .informe-total-sub { font-size: 0.75rem; color: var(--text3); margin-top: 0.25rem; }
+    .informe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; }
+    .informe-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1rem; text-align: center; }
+    .informe-card-num { font-family: 'Syne',sans-serif; font-size: 1.5rem; font-weight: 800; }
+    .informe-card-num.green { color: var(--confirmed); }
+    .informe-card-num.orange { color: var(--pending); }
+    .informe-card-num.red { color: var(--rejected); }
+    .informe-card-label { font-size: 0.7rem; color: var(--text3); margin-top: 2px; }
+    .informe-section-title { font-weight: 700; font-size: 0.875rem; color: var(--text2); margin-bottom: 0.5rem; margin-top: 0.5rem; }
+    .informe-row { display: flex; justify-content: space-between; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 0.4rem; }
+    .informe-row-name { font-weight: 600; font-size: 0.875rem; }
+    .informe-row-monto { font-weight: 700; color: var(--confirmed); font-size: 0.875rem; }
 
     /* LIGHTBOX */
     .lightbox { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; padding: 1rem; }
@@ -194,35 +221,28 @@
     </div>
   </div>
   <div class="main">
-    <!-- CALENDAR -->
     <div class="calendar-wrap">
       <div class="cal-header">
         <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
         <span class="cal-title" id="calTitle"></span>
         <button class="cal-nav" onclick="changeMonth(1)">›</button>
-     </div>
-<div class="cal-grid" id="calGrid">
-  <div class="cal-day-name">Do</div>
-  <div class="cal-day-name">Lu</div>
-  <div class="cal-day-name">Ma</div>
-  <div class="cal-day-name">Mi</div>
-  <div class="cal-day-name">Ju</div>
-  <div class="cal-day-name">Vi</div>
-  <div class="cal-day-name">Sa</div>
-</div>
-</div>
-
+      </div>
+      <div class="cal-grid" id="calGrid">
+        <div class="cal-day-name">Do</div><div class="cal-day-name">Lu</div>
+        <div class="cal-day-name">Ma</div><div class="cal-day-name">Mi</div>
+        <div class="cal-day-name">Ju</div><div class="cal-day-name">Vi</div>
+        <div class="cal-day-name">Sa</div>
+      </div>
+    </div>
     <div class="stats">
       <div class="stat-card"><div class="stat-num pending" id="statPending">0</div><div class="stat-label">Pendientes</div></div>
       <div class="stat-card"><div class="stat-num confirmed" id="statConfirmed">0</div><div class="stat-label">Confirmados</div></div>
       <div class="stat-card"><div class="stat-num rejected" id="statRejected">0</div><div class="stat-label">Rechazados</div></div>
     </div>
-
     <div class="date-label" id="dateLabelWrap" style="display:none">
       📅 <span id="dateLabel"></span>
       <button onclick="clearDateFilter()">Ver todos</button>
     </div>
-
     <div class="filters">
       <button class="filter-btn active" onclick="setFiltro('todos',this)">Todos</button>
       <button class="filter-btn" onclick="setFiltro('pendiente',this)">Pendientes</button>
@@ -233,9 +253,12 @@
       <div class="loading"><div class="spinner"></div></div>
     </div>
   </div>
-  <button class="fab" onclick="showScreen('nuevoScreen');resetNuevoForm()">
-    <span style="font-size:1.3rem">＋</span> Nuevo comprobante
-  </button>
+  <div class="fab-area">
+    <button class="fab" onclick="showScreen('nuevoScreen');resetNuevoForm()">
+      <span style="font-size:1.3rem">＋</span> Nuevo comprobante
+    </button>
+    <button class="fab-report" onclick="showScreen('informeScreen');renderInforme()" title="Informe">📊</button>
+  </div>
 </div>
 
 <!-- NUEVO -->
@@ -247,46 +270,27 @@
     </div>
   </div>
   <div class="form-body">
-    <!-- TIPO -->
     <div>
       <label>Tipo de registro</label>
       <div class="tipo-grid">
-        <button class="tipo-btn active" id="tipoFotoBtn" onclick="setTipo('foto')">
-          <span class="tipo-btn-icon">📷</span>
-          Con foto
-        </button>
-        <button class="tipo-btn" id="tipoTextoBtn" onclick="setTipo('texto')">
-          <span class="tipo-btn-icon">✍️</span>
-          Solo texto
-        </button>
+        <button class="tipo-btn active" id="tipoFotoBtn" onclick="setTipo('foto')"><span class="tipo-btn-icon">📷</span>Con foto</button>
+        <button class="tipo-btn" id="tipoTextoBtn" onclick="setTipo('texto')"><span class="tipo-btn-icon">✍️</span>Solo texto</button>
       </div>
     </div>
-
-    <!-- NOMBRE -->
     <div>
       <label>Nombre y apellido</label>
       <input type="text" class="input-field" id="nombreInput" placeholder="Ej: Juan García" autocomplete="off" />
     </div>
-
-    <!-- MONTO (siempre visible) -->
     <div>
       <label>Monto transferido</label>
       <input type="number" class="input-field" id="montoInput" placeholder="Ej: 5000" inputmode="numeric" />
     </div>
-
-    <!-- FOTO SECTION -->
     <div id="fotoSection">
       <label>Foto del comprobante</label>
       <div id="imgGridWrap">
         <div class="img-grid">
-          <button class="img-btn" onclick="document.getElementById('cameraInput').click()">
-            <div class="img-btn-icon orange">📷</div>
-            Sacar foto
-          </button>
-          <button class="img-btn" onclick="document.getElementById('galleryInput').click()">
-            <div class="img-btn-icon gray">🖼️</div>
-            Galería
-          </button>
+          <button class="img-btn" onclick="document.getElementById('cameraInput').click()"><div class="img-btn-icon orange">📷</div>Sacar foto</button>
+          <button class="img-btn" onclick="document.getElementById('galleryInput').click()"><div class="img-btn-icon gray">🖼️</div>Galería</button>
         </div>
       </div>
       <div id="previewWrap" class="preview-wrap" style="display:none">
@@ -294,20 +298,15 @@
         <button class="preview-remove" onclick="removePreview()">✕</button>
       </div>
     </div>
-
-    <!-- HORA AUTOMATICA -->
     <div>
       <label>Hora de registro</label>
       <div class="auto-time" id="autoTimeBadge">⏰ Cargando...</div>
     </div>
-
     <div id="formError" class="error-msg" style="display:none"></div>
     <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" onchange="handleFile(this)" />
     <input type="file" id="galleryInput" accept="image/*" style="display:none" onchange="handleFile(this)" />
   </div>
-  <button class="btn-save" id="btnSave" onclick="guardarComprobante()">
-    <span>⬆</span> Guardar comprobante
-  </button>
+  <button class="btn-save" id="btnSave" onclick="guardarComprobante()"><span>⬆</span> Guardar comprobante</button>
 </div>
 
 <!-- DETALLE -->
@@ -320,9 +319,7 @@
     <button class="btn-icon" onclick="eliminarComprobante()" style="font-size:1.1rem">🗑</button>
   </div>
   <div class="main">
-    <div id="detalleImgWrap">
-      <img id="detalleImg" class="detail-img" onclick="openLightbox(this.src)" />
-    </div>
+    <div id="detalleImgWrap"><img id="detalleImg" class="detail-img" onclick="openLightbox(this.src)" /></div>
     <div id="detalleTextoWrap" class="detail-text-preview" style="display:none">
       <div style="font-size:2rem;margin-bottom:0.5rem">✍️</div>
       <div style="color:var(--text2);font-size:0.875rem;margin-bottom:0.5rem">Registro manual</div>
@@ -335,11 +332,50 @@
       <div class="detail-row"><span class="detail-label">Hora</span><span class="detail-val" id="detalleHora"></span></div>
       <div class="detail-row"><span class="detail-label">Tipo</span><span class="detail-val" id="detalleTipo"></span></div>
     </div>
+    <button class="btn-edit" onclick="abrirEditar()">✏️ Editar nombre y monto</button>
     <label style="margin-bottom:0.75rem;display:block">Estado</label>
     <div class="estado-grid">
       <button class="estado-btn pendiente" onclick="cambiarEstado('pendiente')"><span class="e-icon">⏳</span>Pendiente</button>
       <button class="estado-btn confirmado" onclick="cambiarEstado('confirmado')"><span class="e-icon">✅</span>Confirmado</button>
       <button class="estado-btn rechazado" onclick="cambiarEstado('rechazado')"><span class="e-icon">❌</span>Rechazado</button>
+    </div>
+  </div>
+</div>
+
+<!-- INFORME -->
+<div id="informeScreen" class="screen">
+  <div class="header">
+    <div class="header-left">
+      <button class="btn-icon" onclick="showScreen('listaScreen')" style="font-size:1.4rem">←</button>
+      <h2>📊 Informe</h2>
+    </div>
+  </div>
+  <div class="main">
+    <div class="informe-tabs">
+      <button class="informe-tab active" onclick="setInformeTab('dia',this)">Hoy</button>
+      <button class="informe-tab" onclick="setInformeTab('semana',this)">Semana</button>
+      <button class="informe-tab" onclick="setInformeTab('mes',this)">Mes</button>
+      <button class="informe-tab" onclick="setInformeTab('total',this)">Todo</button>
+    </div>
+    <div id="informeContenido"></div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3>✏️ Editar registro</h3>
+    <div>
+      <label>Nombre y apellido</label>
+      <input type="text" class="input-field" id="editNombre" placeholder="Nombre" />
+    </div>
+    <div>
+      <label>Monto</label>
+      <input type="number" class="input-field" id="editMonto" placeholder="Monto" inputmode="numeric" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="cerrarEditar()">Cancelar</button>
+      <button class="btn-confirm" onclick="guardarEdicion()">Guardar</button>
     </div>
   </div>
 </div>
@@ -387,8 +423,7 @@
   let currentDetalleId = null;
   let selectedDateFilter = null;
   let currentTipo = 'foto';
-
-  // CALENDAR STATE
+  let currentInformeTab = 'dia';
   let calYear = new Date().getFullYear();
   let calMonth = new Date().getMonth();
 
@@ -430,20 +465,14 @@
   function renderCalendar() {
     const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
     document.getElementById('calTitle').textContent = `${months[calMonth]} ${calYear}`;
-
     const firstDay = new Date(calYear, calMonth, 1).getDay();
     const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
     const today = new Date();
-
-    // Get days that have data
     const daysWithData = new Set();
     allComprobantes.forEach(c => {
       const d = c.created_at?.toDate ? c.created_at.toDate() : new Date(c.created_at);
-      if (d.getFullYear() === calYear && d.getMonth() === calMonth) {
-        daysWithData.add(d.getDate());
-      }
+      if (d.getFullYear() === calYear && d.getMonth() === calMonth) daysWithData.add(d.getDate());
     });
-
     let html = '';
     for (let i = 0; i < firstDay; i++) html += '<div class="cal-day empty"></div>';
     for (let d = 1; d <= daysInMonth; d++) {
@@ -454,17 +483,11 @@
       const classes = ['cal-day', isToday?'today':'', isSelected?'selected':'', hasData?'has-data':''].filter(Boolean).join(' ');
       html += `<div class="${classes}" onclick="selectDay(${d})">${d}</div>`;
     }
-
-   document.getElementById('calGrid').innerHTML = `
-  <div class="cal-day-name">Do</div>
-  <div class="cal-day-name">Lu</div>
-  <div class="cal-day-name">Ma</div>
-  <div class="cal-day-name">Mi</div>
-  <div class="cal-day-name">Ju</div>
-  <div class="cal-day-name">Vi</div>
-  <div class="cal-day-name">Sa</div>
-  ${html}
-`;
+    document.getElementById('calGrid').innerHTML = `
+      <div class="cal-day-name">Do</div><div class="cal-day-name">Lu</div>
+      <div class="cal-day-name">Ma</div><div class="cal-day-name">Mi</div>
+      <div class="cal-day-name">Ju</div><div class="cal-day-name">Vi</div>
+      <div class="cal-day-name">Sa</div>${html}`;
   }
 
   window.selectDay = (day) => {
@@ -472,67 +495,50 @@
     const label = selectedDateFilter.toLocaleDateString('es-AR', { weekday:'long', day:'2-digit', month:'long' });
     document.getElementById('dateLabel').textContent = label;
     document.getElementById('dateLabelWrap').style.display = 'flex';
-    renderCalendar();
-    renderLista();
+    renderCalendar(); renderLista();
   };
 
   window.clearDateFilter = () => {
     selectedDateFilter = null;
     document.getElementById('dateLabelWrap').style.display = 'none';
-    renderCalendar();
-    renderLista();
+    renderCalendar(); renderLista();
   };
 
   function renderLista() {
-    let filtered = currentFiltro === 'todos'
-      ? allComprobantes
-      : allComprobantes.filter(c => c.estado === currentFiltro);
-
+    let filtered = currentFiltro === 'todos' ? allComprobantes : allComprobantes.filter(c => c.estado === currentFiltro);
     if (selectedDateFilter) {
       filtered = filtered.filter(c => {
         const d = c.created_at?.toDate ? c.created_at.toDate() : new Date(c.created_at);
-        return d.getDate() === selectedDateFilter.getDate() &&
-               d.getMonth() === selectedDateFilter.getMonth() &&
-               d.getFullYear() === selectedDateFilter.getFullYear();
+        return d.getDate() === selectedDateFilter.getDate() && d.getMonth() === selectedDateFilter.getMonth() && d.getFullYear() === selectedDateFilter.getFullYear();
       });
     }
-
-    // Stats always from all
     document.getElementById('statPending').textContent = allComprobantes.filter(c => c.estado === 'pendiente').length;
     document.getElementById('statConfirmed').textContent = allComprobantes.filter(c => c.estado === 'confirmado').length;
     document.getElementById('statRejected').textContent = allComprobantes.filter(c => c.estado === 'rechazado').length;
-
     const container = document.getElementById('listaContainer');
-    if (filtered.length === 0) {
-      container.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><span>Sin comprobantes</span></div>';
-      return;
-    }
-
+    if (filtered.length === 0) { container.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><span>Sin comprobantes</span></div>'; return; }
     container.innerHTML = filtered.map(c => {
       const d = c.created_at?.toDate ? c.created_at.toDate() : new Date(c.created_at);
       const hora = d.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' });
       const fecha = d.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit' });
       const iconos = { pendiente:'⏳', confirmado:'✅', rechazado:'❌' };
       const esTexto = c.tipo === 'texto' || !c.imagen_url;
-      const thumb = esTexto
-        ? `<div class="comp-thumb-text">✍️</div>`
-        : `<img class="comp-thumb" src="${c.imagen_url}" alt="${c.nombre}" loading="lazy" />`;
+      const thumb = esTexto ? `<div class="comp-thumb-text">✍️</div>` : `<img class="comp-thumb" src="${c.imagen_url}" alt="${c.nombre}" loading="lazy" />`;
       const monto = c.monto ? `<div class="comp-monto">$${Number(c.monto).toLocaleString('es-AR')}</div>` : '';
-      return `
-        <div class="comp-card" onclick="abrirDetalle('${c.id}')">
-          ${thumb}
-          <div class="comp-info">
-            <div class="comp-name">${c.nombre}</div>
-            ${monto}
-            <div class="comp-meta">
-              <span class="badge ${c.estado}">${iconos[c.estado]} ${c.estado.charAt(0).toUpperCase()+c.estado.slice(1)}</span>
-              ${esTexto ? '<span class="badge texto">✍️ Texto</span>' : ''}
-              <span class="comp-time">${fecha} · ${hora}</span>
-            </div>
+      return `<div class="comp-card" onclick="abrirDetalle('${c.id}')">
+        ${thumb}
+        <div class="comp-info">
+          <div class="comp-name">${c.nombre}</div>
+          ${monto}
+          <div class="comp-meta">
+            <span class="badge ${c.estado}">${iconos[c.estado]} ${c.estado.charAt(0).toUpperCase()+c.estado.slice(1)}</span>
+            ${esTexto ? '<span class="badge texto">✍️ Texto</span>' : ''}
+            <span class="comp-time">${fecha} · ${hora}</span>
           </div>
-          <button class="btn-delete" onclick="event.stopPropagation();eliminarDesdeLista('${c.id}')">🗑</button>
-          <span class="comp-arrow">›</span>
-        </div>`;
+        </div>
+        <button class="btn-delete" onclick="event.stopPropagation();eliminarDesdeLista('${c.id}')">🗑</button>
+        <span class="comp-arrow">›</span>
+      </div>`;
     }).join('');
   }
 
@@ -543,7 +549,7 @@
     renderLista();
   };
 
-  // TIPO SELECTOR
+  // TIPO
   window.setTipo = (tipo) => {
     currentTipo = tipo;
     document.getElementById('tipoFotoBtn').classList.toggle('active', tipo === 'foto');
@@ -554,8 +560,7 @@
   // AUTO TIME
   function updateAutoTime() {
     const now = new Date();
-    const str = now.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit', second:'2-digit' }) +
-                ' — ' + now.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric' });
+    const str = now.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit', second:'2-digit' }) + ' — ' + now.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric' });
     const el = document.getElementById('autoTimeBadge');
     if (el) el.textContent = '⏰ ' + str;
   }
@@ -566,19 +571,14 @@
     document.getElementById('nombreInput').value = '';
     document.getElementById('montoInput').value = '';
     document.getElementById('formError').style.display = 'none';
-    removePreview();
-    setTipo('foto');
-    updateAutoTime();
+    removePreview(); setTipo('foto'); updateAutoTime();
   };
 
-  // FILE
   let selectedFile = null;
   window.handleFile = (input) => {
-    const f = input.files[0];
-    if (!f) return;
+    const f = input.files[0]; if (!f) return;
     selectedFile = f;
-    const url = URL.createObjectURL(f);
-    document.getElementById('previewImg').src = url;
+    document.getElementById('previewImg').src = URL.createObjectURL(f);
     document.getElementById('imgGridWrap').style.display = 'none';
     document.getElementById('previewWrap').style.display = 'block';
   };
@@ -595,77 +595,49 @@
     const monto = document.getElementById('montoInput').value.trim();
     const errEl = document.getElementById('formError');
     errEl.style.display = 'none';
-
     if (!nombre) { errEl.textContent = 'Escribí el nombre de la persona.'; errEl.style.display = 'block'; return; }
     if (currentTipo === 'foto' && !selectedFile) { errEl.textContent = 'Adjuntá una foto del comprobante.'; errEl.style.display = 'block'; return; }
-
     const btn = document.getElementById('btnSave');
-    btn.disabled = true;
-    btn.innerHTML = '<div class="spinner"></div> Guardando...';
-
+    btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Guardando...';
     try {
       let imagen_url = null;
-
       if (currentTipo === 'foto' && selectedFile) {
         const fd = new FormData();
-        fd.append('file', selectedFile);
-        fd.append('upload_preset', CLOUDINARY_PRESET);
+        fd.append('file', selectedFile); fd.append('upload_preset', CLOUDINARY_PRESET);
         const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method:'POST', body:fd });
         const data = await res.json();
         if (!data.secure_url) throw new Error('Error subiendo imagen');
         imagen_url = data.secure_url;
       }
-
-      await addDoc(collection(db, 'comprobantes'), {
-        nombre,
-        monto: monto || null,
-        imagen_url,
-        tipo: currentTipo,
-        estado: 'pendiente',
-        user_id: currentUser.uid,
-        user_email: currentUser.email,
-        user_name: currentUser.displayName,
-        created_at: serverTimestamp()
-      });
-
+      await addDoc(collection(db, 'comprobantes'), { nombre, monto: monto || null, imagen_url, tipo: currentTipo, estado: 'pendiente', user_id: currentUser.uid, user_email: currentUser.email, user_name: currentUser.displayName, created_at: serverTimestamp() });
       document.getElementById('successOverlay').classList.add('show');
       setTimeout(() => {
         document.getElementById('successOverlay').classList.remove('show');
-        btn.disabled = false;
-        btn.innerHTML = '<span>⬆</span> Guardar comprobante';
-        showScreen('listaScreen');
-        loadComprobantes();
+        btn.disabled = false; btn.innerHTML = '<span>⬆</span> Guardar comprobante';
+        showScreen('listaScreen'); loadComprobantes();
       }, 1500);
     } catch(e) {
-      errEl.textContent = 'Error: ' + e.message;
-      errEl.style.display = 'block';
-      btn.disabled = false;
-      btn.innerHTML = '<span>⬆</span> Guardar comprobante';
+      errEl.textContent = 'Error: ' + e.message; errEl.style.display = 'block';
+      btn.disabled = false; btn.innerHTML = '<span>⬆</span> Guardar comprobante';
     }
   };
 
   // DETALLE
   window.abrirDetalle = (id) => {
-    const c = allComprobantes.find(x => x.id === id);
-    if (!c) return;
+    const c = allComprobantes.find(x => x.id === id); if (!c) return;
     currentDetalleId = id;
     const esTexto = c.tipo === 'texto' || !c.imagen_url;
-
     document.getElementById('detalleNombre').textContent = c.nombre;
     document.getElementById('detalleNombreVal').textContent = c.nombre;
     document.getElementById('detalleMonto').textContent = c.monto ? `$${Number(c.monto).toLocaleString('es-AR')}` : 'No especificado';
     document.getElementById('detalleMonto2').textContent = c.monto ? `$${Number(c.monto).toLocaleString('es-AR')}` : '—';
     document.getElementById('detalleTipo').textContent = esTexto ? '✍️ Registro manual' : '📷 Con foto';
-
     document.getElementById('detalleImgWrap').style.display = esTexto ? 'none' : 'block';
     document.getElementById('detalleTextoWrap').style.display = esTexto ? 'block' : 'none';
-
     if (!esTexto) document.getElementById('detalleImg').src = c.imagen_url;
-
     const d = c.created_at?.toDate ? c.created_at.toDate() : new Date(c.created_at);
     document.getElementById('detalleFecha').textContent = d.toLocaleDateString('es-AR', { day:'2-digit', month:'long', year:'numeric' });
     document.getElementById('detalleHora').textContent = d.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' });
-
     document.querySelectorAll('.estado-btn').forEach(b => b.classList.remove('active'));
     document.querySelector(`.estado-btn.${c.estado}`)?.classList.add('active');
     showScreen('detalleScreen');
@@ -681,21 +653,121 @@
     renderLista();
   };
 
+  // EDITAR
+  window.abrirEditar = () => {
+    const c = allComprobantes.find(x => x.id === currentDetalleId); if (!c) return;
+    document.getElementById('editNombre').value = c.nombre;
+    document.getElementById('editMonto').value = c.monto || '';
+    document.getElementById('editModal').classList.add('open');
+  };
+  window.cerrarEditar = () => document.getElementById('editModal').classList.remove('open');
+  window.guardarEdicion = async () => {
+    const nombre = document.getElementById('editNombre').value.trim();
+    const monto = document.getElementById('editMonto').value.trim();
+    if (!nombre) { alert('El nombre no puede estar vacío'); return; }
+    await updateDoc(doc(db, 'comprobantes', currentDetalleId), { nombre, monto: monto || null });
+    const c = allComprobantes.find(x => x.id === currentDetalleId);
+    if (c) { c.nombre = nombre; c.monto = monto || null; }
+    cerrarEditar();
+    abrirDetalle(currentDetalleId);
+    renderLista();
+  };
+
   window.eliminarComprobante = async () => {
     if (!currentDetalleId) return;
     if (!confirm('¿Eliminar este comprobante?')) return;
     await deleteDoc(doc(db, 'comprobantes', currentDetalleId));
     allComprobantes = allComprobantes.filter(c => c.id !== currentDetalleId);
-    renderLista();
-    showScreen('listaScreen');
+    renderLista(); showScreen('listaScreen');
   };
 
   window.eliminarDesdeLista = async (id) => {
     if (!confirm('¿Eliminar?')) return;
     await deleteDoc(doc(db, 'comprobantes', id));
     allComprobantes = allComprobantes.filter(c => c.id !== id);
-    renderLista();
-    renderCalendar();
+    renderLista(); renderCalendar();
+  };
+
+  // INFORME
+  window.setInformeTab = (tab, btn) => {
+    currentInformeTab = tab;
+    document.querySelectorAll('.informe-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderInforme();
+  };
+
+  window.renderInforme = () => {
+    const now = new Date();
+    let desde;
+    let labelPeriodo;
+
+    if (currentInformeTab === 'dia') {
+      desde = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      labelPeriodo = 'hoy';
+    } else if (currentInformeTab === 'semana') {
+      const dow = now.getDay();
+      desde = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dow);
+      labelPeriodo = 'esta semana';
+    } else if (currentInformeTab === 'mes') {
+      desde = new Date(now.getFullYear(), now.getMonth(), 1);
+      labelPeriodo = 'este mes';
+    } else {
+      desde = new Date(0);
+      labelPeriodo = 'todos los tiempos';
+    }
+
+    const filtrados = allComprobantes.filter(c => {
+      const d = c.created_at?.toDate ? c.created_at.toDate() : new Date(c.created_at);
+      return d >= desde;
+    });
+
+    const confirmados = filtrados.filter(c => c.estado === 'confirmado');
+    const pendientes = filtrados.filter(c => c.estado === 'pendiente');
+    const rechazados = filtrados.filter(c => c.estado === 'rechazado');
+
+    const totalConfirmado = confirmados.reduce((s, c) => s + (Number(c.monto) || 0), 0);
+    const totalPendiente = pendientes.reduce((s, c) => s + (Number(c.monto) || 0), 0);
+    const totalGeneral = filtrados.reduce((s, c) => s + (Number(c.monto) || 0), 0);
+
+    // Top transferencias
+    const conMonto = filtrados.filter(c => c.monto && Number(c.monto) > 0).sort((a,b) => Number(b.monto) - Number(a.monto)).slice(0, 5);
+
+    document.getElementById('informeContenido').innerHTML = `
+      <div class="informe-total">
+        <div class="informe-total-label">Total registrado ${labelPeriodo}</div>
+        <div class="informe-total-num">$${totalGeneral.toLocaleString('es-AR')}</div>
+        <div class="informe-total-sub">${filtrados.length} comprobante${filtrados.length !== 1 ? 's' : ''}</div>
+      </div>
+      <div class="informe-grid">
+        <div class="informe-card">
+          <div class="informe-card-num green">$${totalConfirmado.toLocaleString('es-AR')}</div>
+          <div class="informe-card-label">✅ Confirmado (${confirmados.length})</div>
+        </div>
+        <div class="informe-card">
+          <div class="informe-card-num orange">$${totalPendiente.toLocaleString('es-AR')}</div>
+          <div class="informe-card-label">⏳ Pendiente (${pendientes.length})</div>
+        </div>
+        <div class="informe-card">
+          <div class="informe-card-num red">${rechazados.length}</div>
+          <div class="informe-card-label">❌ Rechazados</div>
+        </div>
+        <div class="informe-card">
+          <div class="informe-card-num" style="color:var(--text2)">${filtrados.length}</div>
+          <div class="informe-card-label">📋 Total registros</div>
+        </div>
+      </div>
+      ${conMonto.length > 0 ? `
+        <div class="informe-section-title">💰 Mayores transferencias</div>
+        ${conMonto.map(c => `
+          <div class="informe-row">
+            <div>
+              <div class="informe-row-name">${c.nombre}</div>
+              <div style="font-size:0.7rem;color:var(--text3)">${(c.created_at?.toDate ? c.created_at.toDate() : new Date(c.created_at)).toLocaleDateString('es-AR', {day:'2-digit',month:'2-digit'})}</div>
+            </div>
+            <div class="informe-row-monto">$${Number(c.monto).toLocaleString('es-AR')}</div>
+          </div>`).join('')}
+      ` : '<div class="empty"><div class="empty-icon">📊</div><span>Sin datos con monto en este período</span></div>'}
+    `;
   };
 
   window.openLightbox = (src) => { document.getElementById('lightboxImg').src = src; document.getElementById('lightbox').classList.add('open'); };
