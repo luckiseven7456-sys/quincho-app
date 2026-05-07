@@ -730,7 +730,7 @@
     const totalGeneral = filtrados.reduce((s, c) => s + (Number(c.monto) || 0), 0);
 
     // Top transferencias
-    const conMonto = filtrados.filter(c => c.monto && Number(c.monto) > 0).sort((a,b) => Number(b.monto) - Number(a.monto)).slice(0, 5);
+    const conMonto = filtrados.filter(c => c.monto && Number(c.monto) > 0).sort((a,b) => Number(b.monto) - Number(a.monto)).slice(0, 999);
 
     document.getElementById('informeContenido').innerHTML = `
       <div class="informe-total">
