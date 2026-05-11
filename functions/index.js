@@ -6,9 +6,9 @@ const mercadopago = require("mercadopago");
 const serviceAccount = require("/etc/secrets/serviceAccountKey.json");
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
+  projectId: serviceAccount.project_id
 });
-
 const app = express();
 app.use(express.json());
 
