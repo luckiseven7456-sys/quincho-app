@@ -25,16 +25,33 @@ app.post("/webhook", async (req, res) => {
       return res.sendStatus(200);
     }
 
-    const data = await payment.get({ id: Number(paymentId) });
+  try {
 
-    await admin.firestore().collection("comprobantes").add({
-      nombre: data.payer?.first_name || "Cliente",
-      monto: data.transaction_amount,
-      estado: "confirmado",
-      tipo: "mercadopago",
-      payment_id: data.id,
-      created_at: admin.firestore.FieldValue.serverTimestamp()
-    });
+  const data = await payment.get({ id: Number(paymentId) });
+
+  await admin.firestore().collection("comprobantes").add({
+    nombre: data.payer?.first_name || "Cliente",
+    monto: data.transaction_amount || 0,
+    estado: "confirmado",
+    tipo: "mercadopago",
+    payment_id: data.id,
+    created_at: admin.firestore.FieldValue.serverTimestamp()
+  });
+
+} catch (mpError) {
+
+  console.log("Pago detectado sin metadata completa");
+
+  await admin.firestore().collection("comprobantes").add({
+    nombre: "Pago detectado",
+    monto: 0,
+    estado: "pendiente",
+    tipo: "ipn_transferencia",
+    payment_id: paymentId,
+    created_at: admin.firestore.FieldValue.serverTimestamp()
+  });
+
+}
 
     res.sendStatus(200);
 
