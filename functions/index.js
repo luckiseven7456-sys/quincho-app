@@ -1,24 +1,31 @@
-const functions = require("firebase-functions");
+const express = require("express");
 const admin = require("firebase-admin");
 const mercadopago = require("mercadopago");
 
 admin.initializeApp();
 
-mercadopago.configure({
-  access_token: "APP_USR-7003802c-f67b-430e-9714-2dbb8d8cbf3c"
+const app = express();
+app.use(express.json());
+
+const client = new mercadopago.MercadoPagoConfig({
+  accessToken: process.env.MP_ACCESS_TOKEN
 });
 
-exports.mercadoPagoWebhook = functions.https.onRequest(async (req, res) => {
+const payment = new mercadopago.Payment(client);
+
+app.post("/webhook", async (req, res) => {
 
   try {
 
     console.log("Webhook recibido:", req.body);
 
-    const paymentId = req.body.data.id;
+    const paymentId = req.body?.data?.id;
 
-    const payment = await mercadopago.payment.findById(paymentId);
+    if (!paymentId) {
+      return res.sendStatus(200);
+    }
 
-    const data = payment.body;
+    const data = await payment.get({ id: paymentId });
 
     await admin.firestore().collection("comprobantes").add({
       nombre: data.payer?.first_name || "Cliente",
@@ -38,4 +45,10 @@ exports.mercadoPagoWebhook = functions.https.onRequest(async (req, res) => {
 
   }
 
+});
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Servidor iniciado");
 });
