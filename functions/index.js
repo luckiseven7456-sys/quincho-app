@@ -3,9 +3,7 @@ const express = require("express");
 const admin = require("firebase-admin");
 const mercadopago = require("mercadopago");
 
-const serviceAccount = JSON.parse(
-  process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
-);
+const serviceAccount = require("./serviceAccountKey.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
