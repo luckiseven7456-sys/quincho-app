@@ -1,3 +1,4 @@
+```javascript
 const express = require("express");
 const admin = require("firebase-admin");
 const mercadopago = require("mercadopago");
@@ -31,33 +32,33 @@ app.post("/webhook", async (req, res) => {
       return res.sendStatus(200);
     }
 
-  try {
+    try {
 
-  const data = await payment.get({ id: Number(paymentId) });
+      const data = await payment.get({ id: Number(paymentId) });
 
-  await admin.firestore().collection("comprobantes").add({
-    nombre: data.payer?.first_name || "Cliente",
-    monto: data.transaction_amount || 0,
-    estado: "confirmado",
-    tipo: "mercadopago",
-    payment_id: data.id,
-    created_at: admin.firestore.FieldValue.serverTimestamp()
-  });
+      await admin.firestore().collection("comprobantes").add({
+        nombre: data.payer?.first_name || "Cliente",
+        monto: data.transaction_amount || 0,
+        estado: "confirmado",
+        tipo: "mercadopago",
+        payment_id: data.id,
+        created_at: admin.firestore.FieldValue.serverTimestamp()
+      });
 
-} catch (mpError) {
+    } catch (mpError) {
 
-  console.log("Pago detectado sin metadata completa");
+      console.log("Pago detectado sin metadata completa");
 
-  await admin.firestore().collection("comprobantes").add({
-    nombre: "Pago detectado",
-    monto: 0,
-    estado: "pendiente",
-    tipo: "ipn_transferencia",
-    payment_id: paymentId,
-    created_at: admin.firestore.FieldValue.serverTimestamp()
-  });
+      await admin.firestore().collection("comprobantes").add({
+        nombre: "Pago detectado",
+        monto: 0,
+        estado: "pendiente",
+        tipo: "ipn_transferencia",
+        payment_id: paymentId,
+        created_at: admin.firestore.FieldValue.serverTimestamp()
+      });
 
-}
+    }
 
     res.sendStatus(200);
 
@@ -75,3 +76,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Servidor iniciado");
 });
+```
