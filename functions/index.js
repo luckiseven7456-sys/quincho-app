@@ -1,3 +1,5 @@
+# Reemplazá TODO tu `functions/index.js` por esto
+
 ```javascript
 const express = require("express");
 const admin = require("firebase-admin");
@@ -9,6 +11,9 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   projectId: serviceAccount.project_id
 });
+
+const db = admin.firestore();
+
 const app = express();
 app.use(express.json());
 
@@ -34,7 +39,7 @@ app.post("/webhook", async (req, res) => {
 
       const data = await payment.get({ id: Number(paymentId) });
 
-      await admin.firestore().collection("comprobantes").add({
+      await db.collection("comprobantes").add({
         nombre: data.payer?.first_name || "Cliente",
         monto: data.transaction_amount || 0,
         estado: "confirmado",
@@ -47,7 +52,7 @@ app.post("/webhook", async (req, res) => {
 
       console.log("Pago detectado sin metadata completa");
 
-      await admin.firestore().collection("comprobantes").add({
+      await db.collection("comprobantes").add({
         nombre: "Pago detectado",
         monto: 0,
         estado: "pendiente",
@@ -75,3 +80,11 @@ app.listen(PORT, () => {
   console.log("Servidor iniciado");
 });
 ```
+
+Después ejecutá:
+
+```bash
+git add .
+git commit -m "final firestore
+```
+
