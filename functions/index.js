@@ -25,7 +25,7 @@ app.post("/webhook", async (req, res) => {
       return res.sendStatus(200);
     }
 
-    const data = await payment.get({ id: paymentId });
+    const data = await payment.get({ id: Number(paymentId) });
 
     await admin.firestore().collection("comprobantes").add({
       nombre: data.payer?.first_name || "Cliente",
